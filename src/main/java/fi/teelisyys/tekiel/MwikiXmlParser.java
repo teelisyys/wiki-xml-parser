@@ -17,6 +17,8 @@ public class MwikiXmlParser {
                 ConvertWikiDumpToPlainText.processXmlFile(input, output);
             } else if ("links".equalsIgnoreCase(command)) {
                 InterWikiLinkLister.processXmlFile(input, output);
+            } else if ("contributors".equalsIgnoreCase(command)) {
+                WikiMetaDataDumpContributorLister.processXmlFile(input, output);
             }
 
 
