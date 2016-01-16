@@ -12,7 +12,7 @@ import java.time.Instant;
 
 public class InterWikiLinkLister {
 
-    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
+    public static void main(String[] args) {
         if (args.length == 2) {
             processXmlFile(args[0], args[1]);
         } else {
@@ -21,29 +21,34 @@ public class InterWikiLinkLister {
         processXmlFile(args[0], args[1]);
     }
 
-    public static void processXmlFile(String inputFilePath, String outputPrefix) throws ParserConfigurationException, SAXException, IOException {
+    public static void processXmlFile(String inputFilePath, String outputPrefix) {
         Instant startInstant = Instant.now();
 
         File outputFile = new File(outputPrefix + "-" + Instant.now().toString().replaceAll(":", ""));
         File inputFile = new File(inputFilePath);
 
 
-        long articleCount = new WikiDumpSaxWalker().process((title, wikiText) -> WikiTextUtils.iterate(
-                wikiText,
-                WikiTextUtils.LINK_PATTERN,
-                (m) -> {
-                    try {
-                        FileUtils.write(
-                                outputFile,
-                                MessageFormat.format("{0};{1};{2}",
-                                        m.group("stem"),
-                                        m.group("alt"),
-                                        m.group("suffix")
-                                ).replaceAll("\\n", " ") + "\n", true);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }), inputFile, false);
+        long articleCount = 0;
+        try {
+            articleCount = new WikiDumpSaxWalker().process((title, wikiText) -> WikiTextUtils.iterate(
+                    wikiText,
+                    WikiTextUtils.LINK_PATTERN,
+                    (m) -> {
+                        try {
+                            FileUtils.write(
+                                    outputFile,
+                                    MessageFormat.format("{0};{1};{2}",
+                                            m.group("stem"),
+                                            m.group("alt"),
+                                            m.group("suffix")
+                                    ).replaceAll("\\n", " ") + "\n", true);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }), inputFile, false);
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            throw new RuntimeException(e);
+        }
 
 
         Instant end = Instant.now();

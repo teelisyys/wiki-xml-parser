@@ -23,28 +23,32 @@ public class ConvertWikiDumpToPlainText {
         }
     }
 
-    public static void processXmlFile(String inputFile, String outputFilePrefix) throws ParserConfigurationException, SAXException, IOException {
-        Instant startInstant = Instant.now();
-        System.out.println("START AT " + startInstant);
-        File f = new File(inputFile);
+    public static void processXmlFile(String inputFile, String outputFilePrefix) {
+        try {
+            Instant startInstant = Instant.now();
+            System.out.println("START AT " + startInstant);
+            File f = new File(inputFile);
 
-        new WikiDumpSaxWalker().process((title, wikiText) -> {
-            articleCount++;
-            try {
-                if (file == null || FileUtils.sizeOf(file) > 10_000_000) {
-                    touch(outputFilePrefix);
+            new WikiDumpSaxWalker().process((title, wikiText) -> {
+                articleCount++;
+                try {
+                    if (file == null || FileUtils.sizeOf(file) > 10_000_000) {
+                        touch(outputFilePrefix);
+                    }
+
+                    FileUtils.write(file, title, "utf-8", true);
+                    FileUtils.write(file, WikiTextUtils.stripWikiMarkup(wikiText), "utf-8", true);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
+            }, f, false);
 
-                FileUtils.write(file, title, "utf-8", true);
-                FileUtils.write(file, WikiTextUtils.stripWikiMarkup(wikiText), "utf-8", true);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }, f, false);
-
-        Instant end = Instant.now();
-        System.out.println("END AT " + end);
-        System.out.println("PROCESSED " + articleCount + " FILES IN " + Duration.between(startInstant, end));
+            Instant end = Instant.now();
+            System.out.println("END AT " + end);
+            System.out.println("PROCESSED " + articleCount + " FILES IN " + Duration.between(startInstant, end));
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void touch(String outputFilePrefix) throws IOException {
