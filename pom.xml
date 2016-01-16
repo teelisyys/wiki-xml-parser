@@ -52,7 +52,7 @@
                     <configuration>
                         <archive>
                             <manifest>
-                                <mainClass>fi.teelisyys.tekiel.WikiDumpStatisticCounter</mainClass>
+                                <mainClass>fi.teelisyys.tekiel.MwikiXmlParser</mainClass>
                             </manifest>
                         </archive>
                         <descriptorRefs>
