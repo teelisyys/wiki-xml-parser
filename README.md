@@ -10,3 +10,6 @@ wikimarkup to plaintext, one that lists the interwiki-links, and one that that l
     java -jar target/wikidump-processing-tool-0.0.1-SNAPSHOT-jar-with-dependencies.jar COMMAND path/to/dump.xml path/to/output/prefix
 
 where `COMMAND` is one of `plaintext`, `links`, and `contributors`.
+
+
+Released under MIT-license, see LICENSE.txt
